@@ -1,9 +1,6 @@
 import os
-'''
-#UN-COMMENT ONLY IF YOU HAVE A PROBLEM IN IMPORTING OPENCV
 import sys
 sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
-'''
 import cv2
 import numpy as np
 import tensorflow as tf
@@ -47,9 +44,10 @@ class GroupConv2D(tf.keras.layers.Layer):
         return tf.concat(result, axis = -1)
 
 class ResBlock_E(tf.keras.layers.Layer):
-
+    #num_channel,
     def __init__(self, num_conv_block, kernel_size, group = True, num_group = 4, channel_multiplier = 1, padding = 'SAME', residual_scale = 0.1):
         super(ResBlock_E, self).__init__()
+        #self.num_channel = num_channel
         self.num_conv_block = num_conv_block
         self.kernel_size = kernel_size
         self.group = group
@@ -64,7 +62,8 @@ class ResBlock_E(tf.keras.layers.Layer):
         _, _, _, num_channel = input_shape
         self.point = PointConv2D()
         self.num_channel = num_channel
-        
+        #self.depthwise_filter = tf.random.uniform([self.kernel_size, self.kernel_size, self.num_channel, self.channel_multiplier])
+
     def call(self, input):
 
         x = input
@@ -182,6 +181,9 @@ class CasResNet(tf.keras.Model):
 
         self.upsample = Upsample(self.kernel_size)
 
+    def build(self, input_shape):
+        self.dim = input_shape[1:]
+
     def call(self, input):
 
         x = self.conv_in(input)
@@ -197,6 +199,12 @@ class CasResNet(tf.keras.Model):
         out = self.conv_out(out)*255
 
         return out
+
+    def build_graph(self):
+        x = tf.keras.Input(shape=(self.dim))
+        return tf.keras.Model(inputs=[x], outputs=self.call(x))
+
+'''
 
 
 
