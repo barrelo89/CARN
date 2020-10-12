@@ -4,7 +4,6 @@ This is the implementation of an ECCV'18 paper, "Fast, Accurate, and Lightweight
 ## Prerequisite
 - Language: Python3
 - Required Packages: numpy, cv2 (for read image input), and tensorflow
-- In this implementation, tensorflow-gpu==2.0.0 is installed. If higher version of TF used, you can easily enable 'group convolution' in tf.keras.layers.Conv2D by setting 'groups' attribute to the number of groups you want 
 - To install the required packages, type the following command:
 
 1) Using tensorflow-gpu==2.0.0
@@ -25,7 +24,8 @@ By subclassing layers and models, we can easily design CARN model simply specify
 3) num_res_block: represents the number of resnet blocks in a cascading block
 4) num_conv_block: represents the number of convolution layer in a resnet block
 5) kernel_size: represnets the size of kernel in a convolution layer
-
+- In this implementation, tensorflow-gpu==2.0.0 is installed. If higher version of TF used, you can easily enable 'group convolution' in tf.keras.layers.Conv2D by setting 'groups' attribute to the number of groups you want 
+- You can remove the last Conv2D layer as its functionality already exists in the upsample layer. 
 - How to create the CARN model 
 ```
 #Set the model parameters
