@@ -61,5 +61,9 @@ model.save(save_path)
 model = tf.keras.models.load_model(save_path)
 result = model(input_small[np.newaxis, ...])
 print(result)
-'''```
+'''
+```
+
+- Model Structure
+![Structure](figure/model.png)
 
