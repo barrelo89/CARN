@@ -49,14 +49,17 @@ if not os.path.exists(save_path):
     os.makedirs(save_path)
 
 model = CasResNet(initial_filter_num, num_cas_block, num_res_block, num_conv_block, kernel_size)
+optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-4)
 model.compile(optimizer, loss = tf.keras.losses.MeanSquaredError())
 model.fit(input_small[np.newaxis, ...], input[np.newaxis, ...], epochs = epochs)
+model.build_graph().summary()
+tf.keras.utils.plot_model(model.build_graph(), show_shapes=True, dpi=256)
 
 model.save(save_path)
 
-#If loading the pre-traine model
+'''
 model = tf.keras.models.load_model(save_path)
 result = model(input_small[np.newaxis, ...])
 print(result)
-```
+'''```
 
