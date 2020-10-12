@@ -17,4 +17,46 @@ pip3 install numpy opencv-python tensorflow-gpu==2.0.0
 pip3 install numpy opencv-python tensorflow
 ```
 
+## How to use the CARN model
+By subclassing layers and models, we can easily design CARN model simply specifying a few parameters. 
+- Parameters for CARN model:
+1) initial_filter_num: represents the number of filters for the inital convolution layer
+2) num_cas_block: represents the number of cascading blocks
+3) num_res_block: represents the number of resnet blocks in a cascading block
+4) num_conv_block: represents the number of convolution layer in a resnet block
+5) kernel_size: represnets the size of kernel in a convolution layer
+
+- How to create the CARN model 
+```
+#Set the model parameters
+initial_filter_num = 16
+num_cas_block = 1
+num_res_block = 2
+num_conv_block = 2
+kernel_size = 3
+
+#Load your dataset
+input = cv2.imread('output.jpg').astype(np.float32)
+input_small = cv2.resize(input, None, fx = 1/4, fy = 1/4) / 255.
+
+#Set the training parameters
+epochs = 10
+optimizer = tf.keras.optimizers.Adam(learning_rate = 1e-4)
+
+#Set the model save path
+save_path = 'model'
+if not os.path.exists(save_path):
+    os.makedirs(save_path)
+
+model = CasResNet(initial_filter_num, num_cas_block, num_res_block, num_conv_block, kernel_size)
+model.compile(optimizer, loss = tf.keras.losses.MeanSquaredError())
+model.fit(input_small[np.newaxis, ...], input[np.newaxis, ...], epochs = epochs)
+
+model.save(save_path)
+
+#If loading the pre-traine model
+model = tf.keras.models.load_model(save_path)
+result = model(input_small[np.newaxis, ...])
+print(result)
+```
 
