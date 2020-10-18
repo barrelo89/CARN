@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import cv2
 import numpy as np
 import tensorflow as tf
@@ -194,51 +196,12 @@ class CasResNet(tf.keras.Model):
             out = self.point_list[idx](x)
 
         out = self.upsample(out)
-        out = self.conv_out(out)*255
+        out = self.conv_out(out)
+
+        out = tf.clip_by_value(out, 0.0, 255.0)
 
         return out
 
     def build_graph(self):
         x = tf.keras.Input(shape=(self.dim))
-        return tf.keras.Model(inputs=[x], outputs=self.call(x))
-
-'''
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#end
+        return tf.keras.Model(inputs=[x], outputs = self.call(x))
